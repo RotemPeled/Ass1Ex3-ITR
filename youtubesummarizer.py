@@ -9,15 +9,14 @@ from pytube import YouTube, Search
 from scenedetect import VideoManager, SceneManager
 from scenedetect.detectors import ContentDetector
 
-# SSL configuration
-ssl._create_default_https_context = ssl._create_unverified_context
+# SSL configuration 
 ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
 
 DOWNLOAD_DIRECTORY = 'downloaded_videos'
 
 # OCR and scene detection
-def find_scenes_and_save_frames(video_path, threshold=40.0):
-    reader = easyocr.Reader(['en'])  # Initialize EasyOCR reader
+def find_scenes_and_save_frames(video_path, threshold=60.0):
+    reader = easyocr.Reader(['en'])  
     video_manager = VideoManager([video_path])
     scene_manager = SceneManager()
     scene_manager.add_detector(ContentDetector(threshold=threshold))
@@ -33,14 +32,14 @@ def find_scenes_and_save_frames(video_path, threshold=40.0):
     if not cap.isOpened():
         raise IOError("Could not open video file.")
 
-    all_text = []
+    all_text = []  
     for i, scene in enumerate(scene_list):
         start_frame, _ = scene
         cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame.get_frames())
         ret, frame = cap.read()
         if ret:
             frame_path = f"{base_path}_scene_{i+1}.jpg"
-            cv2.imwrite(frame_path, frame)
+            cv2.imwrite(frame_path, frame) 
 
             # OCR
             results = reader.readtext(frame)
@@ -93,9 +92,9 @@ def main():
             if os.path.exists(downloaded_file):
                 all_text = find_scenes_and_save_frames(downloaded_file)
                 gif_path = os.path.join(download_directory, 'output.gif')
-                generate_gif(download_directory, gif_path)  
+                generate_gif(download_directory, gif_path) 
                 print("All detected text:")
-                print(" ".join(all_text)) 
+                print(" ".join(all_text))
                 
                 os.system(f'open {gif_path}')
             else:
