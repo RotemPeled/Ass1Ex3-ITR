@@ -64,7 +64,7 @@ def find_scenes_and_save_frames(video_path, desired_frames=30, minimum_frames=20
                     font_thickness = 2
                     text_size = cv2.getTextSize(watermark_text, font, font_scale, font_thickness)[0]
                     text_x = img_with_watermark.shape[1] - text_size[0] - 10
-                    text_y = img_with_watermark.shape[0] - 10
+                    text_y = img_with_watermark.shape[0] - 20
 
                     cv2.putText(img_with_watermark, watermark_text, (text_x, text_y), font, font_scale, font_color, font_thickness)
                     cv2.imwrite(frame_path, img_with_watermark)
@@ -76,7 +76,6 @@ def find_scenes_and_save_frames(video_path, desired_frames=30, minimum_frames=20
             video_manager.release()
             threshold -= 5  # Decrease threshold to increase sensitivity
             attempt += 1
-            print(f"Adjusting threshold to {threshold} and retrying...")
 
     cap.release()
     raise Exception("Failed to detect sufficient scenes even after adjusting threshold.")
