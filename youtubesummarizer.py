@@ -15,7 +15,7 @@ ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=ce
 
 DOWNLOAD_DIRECTORY = 'downloaded_videos'
 
-def find_scenes_and_save_frames(video_path, desired_frames=30, minimum_frames=20):
+def find_scenes_and_save_frames(video_path, minimum_frames=20):
     reader = easyocr.Reader(['en'])  
     base_path = os.path.splitext(video_path)[0]
     cap = cv2.VideoCapture(video_path)
@@ -26,6 +26,7 @@ def find_scenes_and_save_frames(video_path, desired_frames=30, minimum_frames=20
     threshold = 30
     max_attempts = 5
     attempt = 0
+    all_text = []  # Define all_text before using it in the loop
 
     while attempt < max_attempts:
         video_manager = VideoManager([video_path])
@@ -37,11 +38,9 @@ def find_scenes_and_save_frames(video_path, desired_frames=30, minimum_frames=20
         scene_manager.detect_scenes(frame_source=video_manager)
 
         scene_list = scene_manager.get_scene_list(base_timecode=video_manager.get_base_timecode())
-        scenes_per_frame = max(1, len(scene_list) // desired_frames)
-
-        all_text = []  
+        
         if len(scene_list) >= minimum_frames:
-            for i, scene in enumerate(scene_list[::scenes_per_frame][:desired_frames]):
+            for i, scene in enumerate(scene_list):
                 frame_num = scene[0].get_frames()
                 cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
                 ret, frame = cap.read()
@@ -79,7 +78,6 @@ def find_scenes_and_save_frames(video_path, desired_frames=30, minimum_frames=20
 
     cap.release()
     raise Exception("Failed to detect sufficient scenes even after adjusting threshold.")
-
 
 def is_frame_black(frame, threshold=30):
     """Check if the frame is mostly black."""
