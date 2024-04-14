@@ -86,26 +86,6 @@ def is_frame_black(frame, threshold=30):
     """Check if the frame is mostly black."""
     return cv2.mean(frame)[0] < threshold
 
-def capture_frames_at_intervals(video_path, desired_frames=25):
-    cap = cv2.VideoCapture(video_path)
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    interval = total_frames // desired_frames
-    frames_captured = 0
-    all_text = []
-
-    while frames_captured < desired_frames:
-        frame_num = frames_captured * interval
-        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
-        ret, frame = cap.read()
-        if ret and not is_frame_black(frame):
-            frame_path = f"{os.path.splitext(video_path)[0]}_frame_{frames_captured + 1}.jpg"
-            cv2.imwrite(frame_path, frame)
-            # OCR and other processing...
-        frames_captured += 1
-
-    cap.release()
-    return all_text
-
 # GIF creation function
 def generate_gif(image_folder, output_file='output.gif', duration=10):
     images = []
