@@ -94,7 +94,7 @@ def generate_gif(image_folder, output_file='output.gif', duration=10):
 
 
 def main():
-    subject = input("Enter the subject to search on YouTube: ")
+    subject = input("Please enter a subject for the video: ")
     search = Search(subject)
     videos = search.results
     
